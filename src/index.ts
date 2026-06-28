@@ -90,6 +90,7 @@ app.get("*", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  logger.info({ port: PORT }, "reader-md-api started");
+const HOST = process.env.HOST || "127.0.0.1";
+app.listen(PORT, HOST, () => {
+  logger.info({ host: HOST, port: PORT }, "reader-md-api started");
 });
