@@ -2,7 +2,7 @@
   "name": "@vakra-dev/reader-md-api",
   "version": "0.1.0",
   "description": "Free URL-to-markdown API. Prefix any URL to get clean markdown.",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "scripts": {

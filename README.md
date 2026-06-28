@@ -36,4 +36,4 @@ Requires a running [reader](https://github.com/vakra-dev/reader) daemon.
 
 ## License
 
-Apache-2.0
+MIT
