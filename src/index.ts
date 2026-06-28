@@ -4,6 +4,7 @@ import pino from "pino";
 import pinoHttp from "pino-http";
 import { validateUrl } from "./validate.js";
 import { scrapeToMarkdown, ScrapeError } from "./engine.js";
+import * as cache from "./cache.js";
 
 const PORT = parseInt(process.env.PORT || "6008", 10);
 const RATE_LIMIT_RPM = parseInt(process.env.RATE_LIMIT_RPM || "30", 10);
@@ -58,9 +59,23 @@ app.get("*", async (req, res) => {
     return;
   }
 
+  // Check cache
+  const cached = cache.get(url);
+  if (cached) {
+    res.set("X-Cache", "HIT")
+      .set("Cache-Control", "public, max-age=3600")
+      .type("text/markdown; charset=utf-8")
+      .send(cached);
+    return;
+  }
+
   try {
     const result = await scrapeToMarkdown(url);
-    res.type("text/markdown; charset=utf-8").send(result.markdown);
+    cache.set(url, result.markdown);
+    res.set("X-Cache", "MISS")
+      .set("Cache-Control", "public, max-age=3600")
+      .type("text/markdown; charset=utf-8")
+      .send(result.markdown);
   } catch (err: unknown) {
     if (err instanceof ScrapeError) {
       const status =
